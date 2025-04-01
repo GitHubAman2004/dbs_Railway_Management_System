@@ -12,9 +12,17 @@ namespace Project1
 {
     public partial class Form4 : Form
     {
+        string username, password, from, to, date,train,type;
         string name, age, gender, contact;
-        public Form4()
+        public Form4(string a, string b, string c, string d, string e, string f, string g)
         {
+            username = a;
+            password = b;
+            from = c;
+            to = d;
+            date = e;
+            train = f;
+            type = g;
             InitializeComponent();
         }
 
@@ -36,13 +44,15 @@ namespace Project1
         private void button1_Click(object sender, EventArgs e)
         {
             string a = "";
-            MessageBox.Show("Ticket Details : \nFrom : " +a+"\nTo : " +a+"\nDate : " +a+"\nTrain No. : "+a+"\nPassenger ID : "+a+"\nPlatform No. : " +a+"\nSeat No. : " +a);
+            MessageBox.Show("Ticket Details : \nFrom : " +from+"\nTo : " +to+"\nDate : " +date+"\nTrain No. : "+train+"\nPassenger ID : "+a+"\nPlatform No. : " +a+"\nCoach Type. : " +type);
             this.Close();
         }
 
         private void Form4_Load(object sender, EventArgs e)
         {
-
+            this.WindowState = FormWindowState.Maximized;  // Maximizes the form
+            this.FormBorderStyle = FormBorderStyle.None;    // Removes the border
+            this.TopMost = true;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

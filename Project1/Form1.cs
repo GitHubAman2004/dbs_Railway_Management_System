@@ -26,7 +26,7 @@ namespace Project1
             this.Controls.Add(pictureBox);
 
             // Image URL
-            string imageUrl = "https://wallpapercave.com/wp/wp6222952.jpg";
+            string imageUrl = "https://th.bing.com/th/id/OIP.sbKUH7qRcHxu1KKdi_FQMgHaEK?rs=1&pid=ImgDetMain";
 
             try
             {
@@ -52,7 +52,7 @@ namespace Project1
         private void button1_Click(object sender, EventArgs e)
         {
             //check if username and password matches
-            Form2 form2 = new Form2();
+            Form2 form2 = new Form2(username,password);
             form2.Show();
 
             //if not messagebox.sjow invalid password
@@ -60,6 +60,7 @@ namespace Project1
 
         private void SignUp_Click(object sender, EventArgs e)
         {
+
             Form5 form5 = new Form5();
             form5.Show();
         }
@@ -87,6 +88,13 @@ namespace Project1
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             password=textBox2.Text;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Maximized;  // Maximizes the form
+            this.FormBorderStyle = FormBorderStyle.None;    // Removes the border
+            this.TopMost = true;
         }
     }
 }

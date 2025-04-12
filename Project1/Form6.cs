@@ -14,9 +14,11 @@ namespace Project1
     public partial class Form6 : Form
     {
         int a, b, c, d;
-        public Form6()
+        String uname;
+        public Form6(String u)
         {
             InitializeComponent();
+            uname = u;
         }
 
         private void button1_Click(object sender, EventArgs e)

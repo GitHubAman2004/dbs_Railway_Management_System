@@ -16,59 +16,70 @@ namespace Project1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // Validate input fields
+            // Input validation remains the same
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password) ||
                 string.IsNullOrWhiteSpace(contact) || string.IsNullOrWhiteSpace(email))
             {
-                MessageBox.Show("All fields must be filled!", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("All fields must be filled!", "Validation Error", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Check password length
             if (password.Length <= 4)
             {
-                MessageBox.Show("Password must be more than 4 characters long!", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Password must be more than 4 characters long!", 
+                            "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Validate email format using regex
             if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
-                MessageBox.Show("Invalid email format!", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Invalid email format!", "Validation Error", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            int id = 1;
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
-            string query = "INSERT INTO Passenger (passenger_id,name, contact, email, password) VALUES (6,@Name, @Contact, @Email, @Password);";
 
+            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            
             try
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+                    using (MySqlCommand cmd = new MySqlCommand("SignupUser", connection))
                     {
-                        // Adding parameters to prevent SQL injection
-                        cmd.Parameters.AddWithValue("@Name", username);
-                        cmd.Parameters.AddWithValue("@Contact", contact);
-                        cmd.Parameters.AddWithValue("@Email", email);
-                        cmd.Parameters.AddWithValue("@Password", password);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        
+                        // Add parameters matching procedure arguments
+                        cmd.Parameters.AddWithValue("@p_username", username);
+                        cmd.Parameters.AddWithValue("@p_contact", contact);
+                        cmd.Parameters.AddWithValue("@p_email", email);
+                        cmd.Parameters.AddWithValue("@p_password", password); // Plaintext password
 
                         int result = cmd.ExecuteNonQuery();
+                        
                         if (result > 0)
                         {
-                            MessageBox.Show("Passenger record inserted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("Registration successful!", "Success", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else
                         {
-                            MessageBox.Show("Insertion failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Registration failed.", "Error", 
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
             }
+            catch (MySqlException ex) when (ex.Number == 1062) // Duplicate entry
+            {
+                MessageBox.Show("Username or email already exists!", "Conflict Error", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Database error: {ex.Message}", "Error", 
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             this.Close();
         }

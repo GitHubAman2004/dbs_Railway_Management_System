@@ -16,11 +16,10 @@ namespace Project1
         string username, password;
         string from, to;
         string date;
-        public Form2(string user, string pass)
+        public Form2(string user)
         {
             InitializeComponent();
             username= user;
-            password= pass;
         }
 
         private void button1_Click(object sender, EventArgs e)

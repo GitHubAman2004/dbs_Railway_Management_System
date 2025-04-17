@@ -20,25 +20,30 @@ namespace Project1
             InitializeComponent();
             PictureBox pictureBox = new PictureBox
             {
-                SizeMode = PictureBoxSizeMode.StretchImage,
+                SizeMode = PictureBoxSizeMode.CenterImage,
                 Dock = DockStyle.Fill
             };
             this.Controls.Add(pictureBox);
 
-            // Image URL
-            string imageUrl = "https://th.bing.com/th/id/OIP.sbKUH7qRcHxu1KKdi_FQMgHaEK?rs=1&pid=ImgDetMain";
+            string localImagePath = @"C:\Users\ANIKAIT CHITLANGIA\Downloads\b.jpg";
+            string onlineImageUrl = "https://i.ibb.co/q3Vx5kTT/c.png"; // Replace with actual direct image link
 
             try
             {
-                using (WebClient webClient = new WebClient())
+                if (System.IO.File.Exists(localImagePath))
                 {
-                    // Download the image as a byte array
-                    byte[] imageBytes = webClient.DownloadData(imageUrl);
-
-                    // Convert bytes to an image and display it
-                    using (var ms = new System.IO.MemoryStream(imageBytes))
+                    pictureBox.Image = System.Drawing.Image.FromFile(localImagePath);
+                }
+                else
+                {
+                    // Local image doesn't exist — fallback to online
+                    using (WebClient webClient = new WebClient())
                     {
-                        pictureBox.Image = System.Drawing.Image.FromStream(ms);
+                        byte[] imageBytes = webClient.DownloadData(onlineImageUrl);
+                        using (var ms = new System.IO.MemoryStream(imageBytes))
+                        {
+                            pictureBox.Image = System.Drawing.Image.FromStream(ms);
+                        }
                     }
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
@@ -56,6 +57,7 @@ namespace Project1
                         cmd.Parameters.AddWithValue("@p_email", email);
                         cmd.Parameters.AddWithValue("@p_password", password); // Plaintext password
 
+                        // Execute the stored procedure
                         int result = cmd.ExecuteNonQuery();
                         
                         if (result > 0)
@@ -81,7 +83,6 @@ namespace Project1
                 MessageBox.Show($"Database error: {ex.Message}", "Error", 
                             MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            this.Close();
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)

@@ -15,10 +15,10 @@ namespace Project1
     {
         int a, b, c, d;
         String uname;
-        public Form6(String u)
+        public Form6()
         {
             InitializeComponent();
-            uname = u;
+            
         }
 
         private void button1_Click(object sender, EventArgs e)

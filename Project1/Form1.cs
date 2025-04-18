@@ -8,6 +8,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient; // Added for MySqlException
+using System.Security.Cryptography; // Added for SHA256
 
 namespace Project1
 {
@@ -51,13 +53,15 @@ namespace Project1
             {
                 MessageBox.Show("Error loading image: " + ex.Message);
             }
-
         }
 
+        // Passenger login - Sends SHA256 hashed password
         private void button1_Click(object sender, EventArgs e)
         {
-            //string username = txtUsername.Text; // Assuming TextBox for username
-            //string password = txtPassword.Text; // Assuming PasswordBox
+            // Get fresh values from textboxes
+            username = textBox1.Text.Trim();
+            password = textBox2.Text;
+
             string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway_fill;Uid=dbs;Pwd=salted_password_#;";
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -71,29 +75,36 @@ namespace Project1
                 using (MySqlConnection conn = new MySqlConnection(connectionString))
                 {
                     conn.Open();
+
+                    // For debug purposes, you can uncomment to see the hash
+                    // string hashedPwd = ComputeSha256Hash(password);
+                    // MessageBox.Show($"Hashed password: {hashedPwd}");
+
                     using (MySqlCommand cmd = new MySqlCommand("CheckLogin", conn))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@p_username", username);
                         cmd.Parameters.AddWithValue("@p_hashed_password", ComputeSha256Hash(password));
 
-                        int loginStatus = Convert.ToInt32(cmd.ExecuteScalar());
-                        
-                        switch(loginStatus)
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
                         {
-                            case 2:
-                                Form6 adminForm = new Form6(username);
-                                adminForm.Show();
-                                this.Hide(); // Close login window
-                                break;
-                            case 1:
+                            int loginStatus = Convert.ToInt32(result);
+
+                            if (loginStatus == 1)
+                            {
                                 Form2 passengerForm = new Form2(username);
                                 passengerForm.Show();
                                 this.Hide();
-                                break;
-                            default:
-                                MessageBox.Show("Invalid username or password");
-                                break;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid passenger credentials");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Login check returned no result");
                         }
                     }
                 }
@@ -117,21 +128,69 @@ namespace Project1
             }
         }
 
-
         private void SignUp_Click(object sender, EventArgs e)
         {
-
             Form5 form5 = new Form5();
             form5.Show();
         }
 
+        // Admin login - Sends plaintext password
         private void button2_Click(object sender, EventArgs e)
         {
-            //check if username and password matches in admin 
-            Form6 form6 = new Form6();
-            form6.Show();
+            // Get fresh values from textboxes
+            username = textBox1.Text.Trim();
+            password = textBox2.Text;
 
-            //if not display error message in messagebox
+            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway_fill;Uid=dbs;Pwd=salted_password_#;";
+
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("Please enter both username and password");
+                return;
+            }
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(connectionString))
+                {
+                    conn.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("CheckLogin", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@p_username", username);
+                        cmd.Parameters.AddWithValue("@p_hashed_password", password); // Plain password for admin
+
+                        object result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            int loginStatus = Convert.ToInt32(result);
+
+                            if (loginStatus == 2)
+                            {
+                                Form6 adminForm = new Form6();
+                                adminForm.Show();
+                                this.Hide();
+                            }
+                            else
+                            {
+                                MessageBox.Show("Invalid admin credentials");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Login check returned no result");
+                        }
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                MessageBox.Show($"Database error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -142,12 +201,12 @@ namespace Project1
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            username=textBox1.Text;
+            username = textBox1.Text;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            password=textBox2.Text;
+            password = textBox2.Text;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -155,6 +214,11 @@ namespace Project1
             this.WindowState = FormWindowState.Maximized;  // Maximizes the form
             this.FormBorderStyle = FormBorderStyle.None;    // Removes the border
             this.TopMost = true;
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

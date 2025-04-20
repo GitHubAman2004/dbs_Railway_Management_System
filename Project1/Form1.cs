@@ -85,7 +85,7 @@ namespace Project1
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@p_username", username);
                         string hashedPassword = ComputeSha256Hash(password);
-                        MessageBox.Show("Hashed password: " + hashedPassword);
+                        //MessageBox.Show("Hashed password: " + hashedPassword);
                         cmd.Parameters.AddWithValue("@p_hashed_password", hashedPassword);
                         // it is showing correct hashed password
 
@@ -100,7 +100,7 @@ namespace Project1
                                 
                                 Form2 passengerForm = new Form2(username);
                                 passengerForm.Show();
-                                this.Hide();
+                                //this.Hide();
                             }
                             else
                             {
@@ -233,7 +233,7 @@ namespace Project1
             username = textBox1.Text.Trim();
             password = textBox2.Text;
 
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway_fill;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -250,7 +250,8 @@ namespace Project1
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.Parameters.AddWithValue("@p_username", username);
-                        cmd.Parameters.AddWithValue("@p_hashed_password", password); // Plain password for admin
+                        string hashedPassword = ComputeSha256Hash(password);
+                        cmd.Parameters.AddWithValue("@p_hashed_password", hashedPassword); // Plain password for admin
 
                         object result = cmd.ExecuteScalar();
                         if (result != null)
@@ -261,7 +262,7 @@ namespace Project1
                             {
                                 Form6 adminForm = new Form6();
                                 adminForm.Show();
-                                this.Hide();
+                                //this.Hide();
                             }
                             else
                             {
@@ -285,5 +286,9 @@ namespace Project1
             }
         }
 
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
+}

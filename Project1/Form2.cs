@@ -188,11 +188,20 @@ namespace Project1
 
         private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
         {
-            date = dateTimePicker1.Value.ToString("yyyy-MM-dd");
-            dayOfWeek = dateTimePicker1.Value.ToString("ddd"); // Ensures proper 3-letter format like "Mon", "Tue"
+            DateTime selectedDate = dateTimePicker1.Value;
+            DateTime today = DateTime.Today;
 
+            if (selectedDate <= today)
+            {
+                MessageBox.Show("Please select valid date.", "Invalid Date", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                dateTimePicker1.Value = today.AddDays(1); // Reset to tomorrow
+                return;
+            }
 
+            date = selectedDate.ToString("yyyy-MM-dd");
+            dayOfWeek = selectedDate.ToString("ddd"); // "Mon", "Tue", etc.
         }
+
 
         private void LoadStationNames()
         {

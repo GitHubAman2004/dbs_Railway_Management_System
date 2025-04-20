@@ -149,19 +149,35 @@ namespace Project1
                 }
             }
 
+
             // Show the ticket details
+            int price = 0;
+
+            if (type.ToLower() == "sleeper")
+                price = 800;
+            else if (type.ToLower() == "3ac")
+                price = 1400;
+            else if (type.ToLower() == "2ac")
+                price = 2200;
+            else if (type.ToLower() == "1ac")
+                price = 3500;
+
             MessageBox.Show("Ticket Details:\n\n" +
-                            "Name: " + name + "\n" +
-                            "Age: " + age + "\n" +
-                            "Gender: " + gender + "\n" +
-                            "Contact: " + contact + "\n\n" +
-                            "From: " + from + "\n" +
-                            "To: " + to + "\n" +
-                            "Date: " + date + "\n" +
-                            "Train: " + train + "\n" +
-                            "Coach Type: " + type + "\n" +
-                            "Passenger ID: " + passengerId + "\n" +
-                            "Platform No.: " + "1");
+                "Name: " + name + "\n" +
+                "Age: " + age + "\n" +
+                "Gender: " + gender + "\n" +
+                "Contact: " + contact + "\n\n" +
+                "From: " + from + "\n" +
+                "To: " + to + "\n" +
+                "Date: " + date + "\n" +
+                "Train: " + train + "\n" +
+                "Coach Type: " + type + "\n" +
+                "Passenger ID: " + passengerId + "\n" +
+                "Platform No.: " + "1" + "\n\n" +
+                "Ticket Price: ₹" + price.ToString());
+
+
+
 
             this.Close();
         }

@@ -37,10 +37,11 @@ namespace Project1
         private void Form3_Load(object sender, EventArgs e)
         {
             comboBox2.Items.Clear();
-            comboBox2.Items.Add("1AC");
-            comboBox2.Items.Add("2AC");
-            comboBox2.Items.Add("3AC");
+            comboBox2.Items.Add("AC First Class");
+            comboBox2.Items.Add("AC Second Class");
+            comboBox2.Items.Add("AC Third Class");
             comboBox2.Items.Add("Sleeper");
+            comboBox2.Items.Add("Second Seater");
             //MessageBox.Show(from + " " + to);
 
             this.WindowState = FormWindowState.Maximized;

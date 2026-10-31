@@ -16,8 +16,8 @@ namespace Project1
     {
         string username, password, from, to, date, train, type;
         string name, age, gender, contact;
-        // Connection string should match your database - update to railway_fin per your schema
-        private readonly string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+        // Connection string comes from ConnectionStrings.config (see Db.cs)
+        private readonly string connectionString = Db.ConnectionString;
 
         public Form4(string a, string b, string c, string d, string e, string f, string g)
         {

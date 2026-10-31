@@ -24,7 +24,7 @@ namespace Project1
         private DataTable currentDataTable;
         private bool dataLoaded = false;
         private MySqlDataAdapter currentAdapter;
-        private string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+        private string connectionString = Db.ConnectionString;
 
         public Form6()
         {

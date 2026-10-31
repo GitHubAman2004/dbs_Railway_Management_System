@@ -30,7 +30,7 @@ namespace Project1
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = Db.ConnectionString;
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(connectionString))
@@ -205,7 +205,7 @@ namespace Project1
 
         private void LoadStationNames()
         {
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = Db.ConnectionString;
             try
             {
                 using (MySqlConnection conn = new MySqlConnection(connectionString))

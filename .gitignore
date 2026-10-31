@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Local database connection string with the real password (see Project1/ConnectionStrings.example.config)
+Project1/ConnectionStrings.config

@@ -62,7 +62,7 @@ namespace Project1
             username = textBox1.Text.Trim();
             password = textBox2.Text;
 
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = Db.ConnectionString;
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -233,7 +233,7 @@ namespace Project1
             username = textBox1.Text.Trim();
             password = textBox2.Text;
 
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = Db.ConnectionString;
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {

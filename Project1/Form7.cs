@@ -13,8 +13,8 @@ namespace Project1
 {
     public partial class Form7 : Form
     {
-        // Update your connection string here
-        string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+        // Connection string comes from ConnectionStrings.config (see Db.cs)
+        string connectionString = Db.ConnectionString;
 
         public Form7()
         {

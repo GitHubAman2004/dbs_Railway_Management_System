@@ -13,8 +13,8 @@ namespace Project1
 
         private void Form8_Load(object sender, EventArgs e)
         {
-            // Database connection string - replace placeholders
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway_fill;Uid=dbs;Pwd=salted_password_#;";
+            // Connection string comes from ConnectionStrings.config (see Db.cs)
+            string connectionString = Db.ConnectionString;
 
             // SQL query to execute
             string query = "SELECT * FROM admin;";

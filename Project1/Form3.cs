@@ -127,7 +127,7 @@ namespace Project1
         // Load train names into comboBox1
         private void LoadTrains()
         {
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = Db.ConnectionString;
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {
@@ -190,7 +190,7 @@ namespace Project1
         // Load available class types for a selected train
         private void LoadAvailableClassesForTrain(string trainName)
         {
-            string connectionString = "Server=res-crypt.southindia.cloudapp.azure.com;Port=3306;Database=railway;Uid=dbs;Pwd=salted_password_#;";
+            string connectionString = Db.ConnectionString;
 
             using (MySqlConnection conn = new MySqlConnection(connectionString))
             {

@@ -16,6 +16,14 @@ namespace Project1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            string error;
+            if (!Db.IsConfigured(out error))
+            {
+                MessageBox.Show(error, "Database not configured", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             Application.Run(new Form1());
         }
     }

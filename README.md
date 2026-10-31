@@ -100,12 +100,30 @@ From a terminal, using the MySQL command-line client:
 mysql -h <server-address> -P 3306 -u <username> -p < database/final.sql
 ```
 
-You can also open `final.sql` in MySQL Workbench and run it there.
+Or use **MySQL Workbench**:
+1. Add a connection with the server address, port `3306` and username. Click **Test Connection**. If Workbench warns about an "incompatible/nonstandard server version" (it is tested up to MySQL 8.0), click **Continue Anyway**.
+2. Open the connection, then **File → Open SQL Script…** and pick `final.sql`.
+3. Make sure nothing is highlighted, then click the first **⚡** button **once** to run the whole file.
+4. Every row in *Action Output* should be green. One yellow warning, *"Can't create database 'railway'; database exists"*, is fine if the database was already created (for example as the RDS "Initial database name").
+
+Quick test that it worked. This should return `2`, meaning "valid admin":
+
+```sql
+CALL railway.CheckLogin('admin_raj', SHA2('password', 256));
+```
 
 > **On AWS RDS (or any server with binary logging turned on),** MySQL blocks creating triggers unless the setting `log_bin_trust_function_creators` is `1`. On RDS, set it in a custom **DB parameter group** attached to the database. Otherwise the script stops at the triggers with *"You do not have the SUPER privilege and binary logging is enabled"*.
 
 ### 4. Point the app at the database
-The connection string (the line that tells the app the server address, database name, username and password) is currently written separately inside each form (`Form1`–`Form8`). Change the `Server=`, `Uid=` and `Pwd=` values in all of them to match your server.
+The **connection string** is the line that tells the app the server address, database name, username and password. All forms read it from one place: `Project1/Db.cs`, which reads it from a file called **`Project1/ConnectionStrings.config`**.
+
+That file holds the real password, so it is **not in this repository** (it's listed in `.gitignore`). On every computer that runs the app:
+
+1. In the `Project1` folder, copy `ConnectionStrings.example.config` and name the copy `ConnectionStrings.config`.
+2. Open it in any text editor and replace `YOUR_PASSWORD_HERE` with the real database password. Change `Server=` too if the database moved.
+3. Build and run the app in Visual Studio. The build copies the file next to the `.exe` automatically.
+
+If the file is missing, the app shows a *"Database not configured"* message when it starts, instead of crashing.
 
 ---
 
@@ -141,18 +159,25 @@ The database password is **not** stored in this repository.
 - [x] Firewall rule allows the developer's current IP address (MySQL/Aurora, TCP 3306)
 - [x] Public access confirmed as **Publicly accessible**
 - [x] `log_bin_trust_function_creators` set to `1` in `railway-params` (it was blank, meaning off, before)
-- [ ] Load `database/final.sql` (with the database name changed to `railway`)
-- [ ] Update the connection strings in the app to the new endpoint
-- [ ] Test login, booking and admin screens against the new database
+- [x] Connected with MySQL Workbench from the developer's Mac
+- [x] Loaded `database/final.sql` with the database name changed to `railway`: 13 tables, sample data, 3 stored procedures and 6 triggers, all without errors
+- [x] Tested `CheckLogin('admin_raj', …)`, which returns `2` (valid admin)
+- [x] App code switched to one shared connection string (`Db.cs` + `ConnectionStrings.config`) pointing at AWS
+- [ ] Create `ConnectionStrings.config` with the real password on the computer that runs the app
+- [ ] Test login, booking and admin screens in the app against the new database
 
 ### Allowing a new computer or network ⚠️
 
-The firewall only lets in specific internet (IP) addresses. Your address changes when you use a different Wi-Fi (for example college), and sometimes when the router restarts. If the app suddenly says *"Unable to connect to any of the specified MySQL hosts"*:
+The firewall only lets in specific internet (IP) addresses. Your address changes when you use a different Wi-Fi (for example college), and sometimes when the router restarts. If the app or Workbench suddenly says *"Unable to connect to any of the specified MySQL hosts"* (a wrong password says *"Access denied"* instead):
 
-1. AWS Console → **Aurora and RDS → Databases → railway-db → Connectivity & security**.
-2. Click the security group **railway-db-sg**.
+1. Find the computer's real internet address. In a terminal, run `curl https://checkip.amazonaws.com`. Don't rely on a browser or the console's **My IP** option, because iCloud Private Relay or a VPN can show a different address than the one the app really uses.
+2. AWS Console → **Aurora and RDS → Databases → railway-db → Connectivity & security**, scroll to **Security group rules**, then click **railway-db-sg**.
 3. **Inbound rules → Edit inbound rules**.
-4. Change **Source** to **My IP** (or **Add rule** → Type **MySQL/Aurora** → Source **My IP** to keep the old one too) → **Save rules**.
+4. Set **Source** to **Custom** and enter the address, then **Save rules**. Use **Add rule** (Type **MySQL/Aurora**) to keep the old address too.
+
+**Why the rule uses a `/24` range:** the home internet provider hands out addresses from one group and changed the last number overnight (for example `x.y.z.82`, then `x.y.z.44`). So the rule allows `x.y.z.0/24`, meaning all 256 addresses where the first three numbers match. That's still limited to one provider's block, much safer than `0.0.0.0/0` (the whole internet), and the database password is still required.
+
+> Some networks block port 3306, which is common on college or office Wi-Fi. If the address is allowed but the connection still times out, try a phone hotspot.
 
 ### Stopping charges when the project is over
 
@@ -176,6 +201,6 @@ Use **Login Admin** for admin accounts and **Login** for passengers.
 ## Known issues
 
 - **Database name mismatch:** see step 2 above.
-- **`Form8` reads a different database, `railway_fill`.** `final.sql` doesn't create it, so that screen shows an error unless the database exists.
 - **Saving feedback (`Form7`) may fail.** The app inserts only `comments`, but `feedback.ticket_id` is a required column with no default value. Also, no other screen opens `Form7` at the moment.
-- **The database password is written in the source code.** Because this repository is public, change the password on the server and move the connection string into `Project1/App.config` instead.
+- **Old password in git history:** earlier commits contain the old Azure server's password. That server no longer exists, and the AWS password is kept out of the repository (see step 4).
+- *Fixed:* `Form8` used to read a separate `railway_fill` database. It now uses the same `railway` database as every other form.

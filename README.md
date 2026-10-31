@@ -76,7 +76,7 @@ A trigger runs automatically when data changes. Six triggers record every insert
 ## Setting up the database
 
 ### 1. Get a MySQL server
-Any MySQL 8.x server works: one on your own PC, a cloud virtual machine, or a managed cloud database. The project first ran on an **Azure** virtual machine and was later moved to **AWS RDS for MySQL 8.4** in the Mumbai region (`ap-south-1`).
+Any MySQL 8.x server works: one on your own PC, a cloud virtual machine, or a managed cloud database. The project currently uses **AWS RDS**. See [Cloud hosting: AWS RDS](#cloud-hosting-aws-rds) below.
 
 ### 2. Fix the database name before importing ⚠️
 `final.sql` creates a database called **`railway_fin`**, but the app connects to a database called **`railway`**. Change the first lines of the script from:
@@ -106,6 +106,56 @@ You can also open `final.sql` in MySQL Workbench and run it there.
 
 ### 4. Point the app at the database
 The connection string (the line that tells the app the server address, database name, username and password) is currently written separately inside each form (`Form1`–`Form8`). Change the `Server=`, `Uid=` and `Pwd=` values in all of them to match your server.
+
+---
+
+## Cloud hosting: AWS RDS
+
+The database first ran on an **Azure** virtual machine. When the Azure free credits ran out (October 2026), it was moved to **Amazon RDS for MySQL**. RDS is AWS's managed database service, where AWS runs and backs up the database for you.
+
+### Current setup
+
+| Setting | Value | Why |
+|---|---|---|
+| Region | Asia Pacific (Mumbai), `ap-south-1` | Closest AWS region to India, so it's faster |
+| Endpoint (server address) | `railway-db.c5gwki0cwy64.ap-south-1.rds.amazonaws.com` | Goes in `Server=` in the app's connection string |
+| Port | `3306` | Standard MySQL port, already used by the app |
+| Engine | MySQL Community **8.4.11** | Matches the `railway-params` parameter group |
+| Instance class | `db.t4g.micro` (2 vCPU, 1 GiB RAM) | Free-tier size |
+| Storage | 20 GiB General Purpose SSD (gp2), autoscaling **off** | Free-tier size. Autoscaling off so the disk can't grow and add charges |
+| Deployment | Single-AZ (one data centre) | Enough for a project. Multi-AZ costs double |
+| Master username | `dbs` | Same user the app already logs in with |
+| Initial database | `railway` | The database name the app connects to |
+| Parameter group | `railway-params` | Custom settings. `log_bin_trust_function_creators` must be `1` so the triggers can be created |
+| Public access | Yes | The app runs on a PC outside AWS, so the database must be reachable over the internet |
+| Security group (firewall) | `railway-db-sg` | Only allows chosen IP addresses on port 3306 |
+| Automated backups | On, kept for 1 day | Free daily safety copy |
+| Encryption | On (default `aws/rds` key) | Free, protects data stored on disk |
+| Deletion protection | Off | So the database can be deleted easily when the project is over |
+
+The database password is **not** stored in this repository.
+
+### Migration progress
+
+- [x] Database created on AWS RDS and showing **Available**
+- [x] Firewall rule allows the developer's current IP address
+- [ ] Confirm `log_bin_trust_function_creators = 1` in `railway-params`
+- [ ] Load `database/final.sql` (with the database name changed to `railway`)
+- [ ] Update the connection strings in the app to the new endpoint
+- [ ] Test login, booking and admin screens against the new database
+
+### Allowing a new computer or network ⚠️
+
+The firewall only lets in specific internet (IP) addresses. Your address changes when you use a different Wi-Fi (for example college), and sometimes when the router restarts. If the app suddenly says *"Unable to connect to any of the specified MySQL hosts"*:
+
+1. AWS Console → **Aurora and RDS → Databases → railway-db → Connectivity & security**.
+2. Click the security group **railway-db-sg**.
+3. **Inbound rules → Edit inbound rules**.
+4. Change **Source** to **My IP** (or **Add rule** → Type **MySQL/Aurora** → Source **My IP** to keep the old one too) → **Save rules**.
+
+### Stopping charges when the project is over
+
+AWS → **Databases** → select `railway-db` → **Actions → Delete**. Take a final snapshot if you want to keep the data. Running costs are covered by the AWS Free plan credits until they run out. The public IP address is a small extra charge.
 
 ---
 

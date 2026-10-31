@@ -17,6 +17,7 @@ Passengers can sign up, log in, search trains between two stations, and book a t
 |---|---|
 | `Project1/` | The C# Windows Forms app (open `Project1.sln` in Visual Studio) |
 | `database/final.sql` | **The full database script.** It creates every table, the stored procedures and the triggers, and fills in sample data |
+| `database/demo.sql` | **Live demo script.** Runs every app feature as SQL in MySQL Workbench (see [Presenting the project](#presenting-the-project-with-mysql-workbench)) |
 | `database/railway_schema.mwb` | MySQL Workbench model of the final database design |
 | `database/er_dig.mwb` | MySQL Workbench model of the ER diagram |
 | `docs/Final_report-RailwayMgmtSystem.pdf` | Project report, including the SRS (Software Requirements Specification), ER diagram, normalization and screenshots |
@@ -184,6 +185,39 @@ On campus, the hostel and classroom Wi-Fi are run by the same provider, so both 
 ### Stopping charges when the project is over
 
 AWS → **Databases** → select `railway-db` → **Actions → Delete**. Take a final snapshot if you want to keep the data. Running costs are covered by the AWS Free plan credits until they run out. The public IP address is a small extra charge.
+
+---
+
+## Presenting the project with MySQL Workbench
+
+The C# app is only a front end. Every button sends a SQL query or calls a stored procedure. So the whole project can be shown from **MySQL Workbench** on any laptop (Mac included), without running the Windows app. `database/demo.sql` contains those same queries, in the order of the app's screens.
+
+### Before the demo
+1. Check the laptop's internet address is allowed in the firewall (see [Allowing a new computer or network](#allowing-a-new-computer-or-network-️)), then open the **AWS railway** connection in Workbench.
+2. **File → Open SQL Script…** → `database/demo.sql`.
+
+### Suggested order (about 10–15 minutes)
+1. **The cloud database.** Show `railway-db` as **Available** in the AWS console (Aurora and RDS → Databases). This proves the database runs on Amazon RDS in Mumbai.
+2. **ER diagram.** Open `database/railway_schema.mwb` (File → Open Model). Or draw it live from AWS: **Database → Reverse Engineer…** → choose the AWS connection → tick `railway` → keep clicking **Continue/Execute**. Workbench draws the tables and their links.
+3. **`demo.sql`, one part at a time.** Highlight a part and click the first **⚡**:
+
+| Part | Shows | App screen |
+|---|---|---|
+| 0 | Connected to MySQL on AWS | — |
+| 1 | 13 tables, row counts, all foreign keys | Data design (report ch. 4) |
+| 2 | `CheckLogin`: 2 = admin, 1 = passenger, 0 = wrong | Login (Form1) |
+| 3 | `SignupUser` stores a SHA-256 hash, and a trigger logs it | Sign up (Form5) |
+| 4 | Search trains by route and weekday, then seat classes | Travel / Train details (Form2, Form3) |
+| 5 | Book a ticket: check schedule, find a free seat, create the ticket, show the platform | Passenger details (Form4) |
+| 6 | Add feedback (rating 1–5) | Feedback (Form7) |
+| 7 | Dashboard counts, timetable, bookings and ratings per train, staff assignments | Admin portal (Form6) |
+| 8 | Triggers and the `operation_log` audit history | — |
+| 9 | Stored procedures in the database | — |
+| 10 | **Reset:** deletes the demo passenger, so the demo can be run again | — |
+
+**Rules that block bad data:** each part has an `EXPECTED ERROR` line, commented out. Run it on its own (click inside it, then **⌘ + Return**) to show the database refusing a duplicate sign-up, a double-booked seat, or a rating of 6.
+
+The script was tested end to end (twice in a row, with reset) on a local MySQL-compatible server before use.
 
 ---
 

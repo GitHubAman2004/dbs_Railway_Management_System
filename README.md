@@ -138,8 +138,9 @@ The database password is **not** stored in this repository.
 ### Migration progress
 
 - [x] Database created on AWS RDS and showing **Available**
-- [x] Firewall rule allows the developer's current IP address
-- [ ] Confirm `log_bin_trust_function_creators = 1` in `railway-params`
+- [x] Firewall rule allows the developer's current IP address (MySQL/Aurora, TCP 3306)
+- [x] Public access confirmed as **Publicly accessible**
+- [x] `log_bin_trust_function_creators` set to `1` in `railway-params` (it was blank, meaning off, before)
 - [ ] Load `database/final.sql` (with the database name changed to `railway`)
 - [ ] Update the connection strings in the app to the new endpoint
 - [ ] Test login, booking and admin screens against the new database

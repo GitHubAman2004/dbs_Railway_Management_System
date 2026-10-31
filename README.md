@@ -177,6 +177,8 @@ The firewall only lets in specific internet (IP) addresses. Your address changes
 
 **Why the rule uses a `/24` range:** the home internet provider hands out addresses from one group and changed the last number overnight (for example `x.y.z.82`, then `x.y.z.44`). So the rule allows `x.y.z.0/24`, meaning all 256 addresses where the first three numbers match. That's still limited to one provider's block, much safer than `0.0.0.0/0` (the whole internet), and the database password is still required.
 
+On campus, the hostel and classroom Wi-Fi are run by the same provider, so both come from this one range and the single rule covers both. Other students on the same campus network share these addresses too, so the firewall doesn't separate you from them. **The database password is the real protection, so keep it strong and private.**
+
 > Some networks block port 3306, which is common on college or office Wi-Fi. If the address is allowed but the connection still times out, try a phone hotspot.
 
 ### Stopping charges when the project is over

@@ -215,6 +215,16 @@ The C# app is only a front end. Every button sends a SQL query or calls a stored
 | 9 | Stored procedures in the database | — |
 | 10 | **Reset:** deletes the demo passenger, so the demo can be run again | — |
 
+### From a Mac terminal instead of Workbench
+
+```bash
+brew install mysql-client                      # once (needs Homebrew)
+echo 'export PATH="$(brew --prefix mysql-client)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+mysql -h railway-db.c5gwki0cwy64.ap-south-1.rds.amazonaws.com -P 3306 -u dbs -p railway
+```
+
+Type the password when asked. Nothing appears while you type, which is normal. Run the whole demo at once with `mysql -h <endpoint> -u dbs -p -t railway < database/demo.sql`.
+
 **Rules that block bad data:** each part has an `EXPECTED ERROR` line, commented out. Run it on its own (click inside it, then **⌘ + Return**) to show the database refusing a duplicate sign-up, a double-booked seat, or a rating of 6.
 
 The script was tested end to end (twice in a row, with reset) on a local MySQL-compatible server before use.

@@ -182,6 +182,14 @@ On campus, the hostel and classroom Wi-Fi are run by the same provider, so both 
 
 > Some networks block port 3306, which is common on college or office Wi-Fi. If the address is allowed but the connection still times out, try a phone hotspot.
 
+### Saving credits between demos
+
+While `railway-db` is **Available**, it uses AWS credits every hour: roughly **US$15–20 a month** in total for the micro server, 20 GB of disk and the public IP address. The exact number is in **Billing and Cost Management**. To pause it:
+
+- **Pause:** Databases → select `railway-db` → **Actions → Stop temporarily**. The server-hours charge stops, and only storage is charged. ⚠️ AWS **starts it again automatically after 7 days**, so stop it again if needed.
+- **Resume before a demo:** **Actions → Start**, then wait 5–10 minutes until it shows **Available**.
+- **Alert:** Billing → **Budgets → Create budget** (for example a monthly budget of US$5 with an email alert) so a forgotten database can't quietly use up the credits.
+
 ### Stopping charges when the project is over
 
 AWS → **Databases** → select `railway-db` → **Actions → Delete**. Take a final snapshot if you want to keep the data. Running costs are covered by the AWS Free plan credits until they run out. The public IP address is a small extra charge.
